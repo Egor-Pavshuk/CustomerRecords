@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CustomerRecords.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,9 +24,11 @@ namespace CustomerRecords
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        public CustomerRecordsViewModel ViewModel { get; set; } = new CustomerRecordsViewModel();
         public MainPage()
         {
-            this.InitializeComponent();             
+            this.InitializeComponent();
+            this.DataContext = ViewModel;
         }
     }
 }
