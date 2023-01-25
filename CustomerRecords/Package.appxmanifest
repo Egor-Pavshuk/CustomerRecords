@@ -32,7 +32,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="CustomerRecords.App">
       <uap:VisualElements
-        DisplayName="CustomerRecords"
+        DisplayName="Customers records"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="CustomerRecords"
