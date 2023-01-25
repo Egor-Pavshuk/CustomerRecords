@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CustomerRecords.Events;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -71,12 +72,15 @@ namespace CustomerRecords.ViewModels
                 if (Records.Count > 0)
                 {
                     var customersRecord = new CustomerRecordViewModel(FirstName, LastName);
+                    customersRecord.DeleteRecord += Remove;
                     customersRecord.Record.Id = Records.Last().Record.Id + 1;
                     Records.Add(customersRecord);
                 }
                 else
                 {
-                    Records.Add(new CustomerRecordViewModel(FirstName, LastName));
+                    var customersRecord = new CustomerRecordViewModel(FirstName, LastName);
+                    customersRecord.DeleteRecord += Remove;
+                    Records.Add(customersRecord);
                 }
 
                 FirstName = string.Empty;
@@ -85,7 +89,7 @@ namespace CustomerRecords.ViewModels
 
         }
 
-        public async void Remove()
+        public async void Remove(object sender, DeleteRecordEventArgs e)
         {
             var contentDialog = new ContentDialog()
             {
@@ -98,7 +102,7 @@ namespace CustomerRecords.ViewModels
             var confirmationResult = await contentDialog.ShowAsync();
             if (confirmationResult == ContentDialogResult.Primary)
             {
-                Records.RemoveAt(_selectedIndex);
+                Records.Remove(Records.First(r => r.Record.Id == e.RecordId));
                 SelectedIndex = -1;
             }
         }
