@@ -1,49 +1,63 @@
-﻿using CustomerRecords.Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace CustomerRecords.ViewModels
 {
     public class CustomerRecordsViewModel : INotifyPropertyChanged
     {
-        //private CustomerRecord _selectedRecord;
         private CustomerRecordViewModel _record;
+        private int _selectedIndex = -1;
+        private bool _isRemoveButtonEnable;
 
         public ObservableCollection<CustomerRecordViewModel> Records { get; set; }
-        public string FirstName { get => _record.CustomersRecord.FirstName;
+        public string FirstName
+        {
+            get => _record.Record.FirstName;
             set
             {
-                _record.CustomersRecord.FirstName = value;
-                OnPropertyChanged("FirstName");
+                _record.Record.FirstName = value;
+                OnPropertyChanged();
             }
         }
         public string LastName
         {
-            get => _record.CustomersRecord.LastName;
+            get => _record.Record.LastName;
             set
             {
-                _record.CustomersRecord.LastName = value;
-                OnPropertyChanged("LastName");
+                _record.Record.LastName = value;
+                OnPropertyChanged();
             }
         }
-        //public CustomerRecordViewModel SelectedRecord
-        //{
-        //    get { return _selectedRecord; }
-        //    set
-        //    {
-        //        _selectedRecord = value;
-        //        OnPropertyChanged("SelectedRecord");
-        //    }
-        //}
-        
+        public int SelectedIndex
+        {
+            get => _selectedIndex;
+            set
+            {
+                _selectedIndex = value;
+                if (_selectedIndex != -1)
+                {
+                    IsRemoveButtonEnable = true;
+                }
+                else
+                    IsRemoveButtonEnable = false;
+
+                OnPropertyChanged();
+            }
+        }
+        public bool IsRemoveButtonEnable
+        {
+            get => _isRemoveButtonEnable;
+            set
+            {
+                _isRemoveButtonEnable = value;
+                OnPropertyChanged();
+            }
+        }
+
         public CustomerRecordsViewModel()
         {
             _record = new CustomerRecordViewModel(string.Empty, string.Empty);
@@ -57,7 +71,7 @@ namespace CustomerRecords.ViewModels
                 if (Records.Count > 0)
                 {
                     var customersRecord = new CustomerRecordViewModel(FirstName, LastName);
-                    customersRecord.CustomersRecord.Id = Records.Last().CustomersRecord.Id + 1;
+                    customersRecord.Record.Id = Records.Last().Record.Id + 1;
                     Records.Add(customersRecord);
                 }
                 else
@@ -68,7 +82,25 @@ namespace CustomerRecords.ViewModels
                 FirstName = string.Empty;
                 LastName = string.Empty;
             }
-            
+
+        }
+
+        public async void Remove()
+        {
+            var contentDialog = new ContentDialog()
+            {
+                Title = "Confirmation",
+                Content = "Are you sure to delete?",
+                PrimaryButtonText = "Yes",
+                CloseButtonText = "Cancel",
+            };
+
+            var confirmationResult = await contentDialog.ShowAsync();
+            if (confirmationResult == ContentDialogResult.Primary)
+            {
+                Records.RemoveAt(_selectedIndex);
+                SelectedIndex = -1;
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
