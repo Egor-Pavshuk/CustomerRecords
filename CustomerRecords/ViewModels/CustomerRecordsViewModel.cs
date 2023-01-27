@@ -12,6 +12,7 @@ namespace CustomerRecords.ViewModels
     {
         private CustomerRecordViewModel record;
         private int selectedIndex = -1;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public ObservableCollection<CustomerRecordViewModel> Records { get; set; }
         public string FirstName
@@ -99,11 +100,12 @@ namespace CustomerRecords.ViewModels
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             if (PropertyChanged != null)
+            {
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            }
         }
     }
 }

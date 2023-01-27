@@ -112,7 +112,9 @@ namespace CustomerRecords.ViewModels
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             if (PropertyChanged != null)
+            {
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            }
         }
         private void OnDeleteRecord(object sender, DeleteRecordEventArgs e)
         {
