@@ -12,11 +12,11 @@ namespace CustomerRecords.ViewModels
 {
     public class CustomerRecordViewModel : INotifyPropertyChanged
     {
-        private CustomerRecord _customerRecord;
-        private bool _isReadOnly;
-        private string _buttonContent;
-        private string _firstName;
-        private string _lastName;
+        private CustomerRecord customerRecord;
+        private bool isReadOnly;
+        private string buttonContent;
+        private string firstName;
+        private string lastName;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public RoutedEventHandler EditSaveButton { get; private set; }
@@ -24,62 +24,62 @@ namespace CustomerRecords.ViewModels
 
         public bool IsReadOnly
         {
-            get { return _isReadOnly; }
+            get => isReadOnly;
             set
             {
-                _isReadOnly = value;
+                isReadOnly = value;
                 OnPropertyChanged();
             }
         }
         public string ButtonContent
         {
-            get { return _buttonContent; }
+            get => buttonContent;
             set
             {
-                _buttonContent = value;
+                buttonContent = value;
                 OnPropertyChanged();
             }
         }
         public CustomerRecord Record
         {
-            get { return _customerRecord; }
+            get => customerRecord;
             set
             {
-                _customerRecord = value;
+                customerRecord = value;
                 OnPropertyChanged();
             }
         }
 
         public string FirstName
         {
-            get { return _firstName; }
+            get => firstName;
             set
             {
-                _firstName = value;
+                firstName = value;
                 OnPropertyChanged();
             }
         }
         public string LastName
         {
-            get { return _lastName; }
+            get => lastName;
             set
             {
-                _lastName = value;
+                lastName = value;
                 OnPropertyChanged();
             }
         }
         public CustomerRecordViewModel(string firstName, string lastName)
         {
-            _customerRecord = new CustomerRecord(firstName, lastName);
+            customerRecord = new CustomerRecord(firstName, lastName);
             ButtonContent = "Edit";
             FirstName = firstName;
             LastName = lastName;
-            _isReadOnly = true;
+            isReadOnly = true;
             EditSaveButton = Edit;
         }
         public void RemoveRecord()
         {
-            OnDeleteRecord(this, new DeleteRecordEventArgs(_customerRecord.Id));
+            OnDeleteRecord(this, new DeleteRecordEventArgs(customerRecord.Id));
         }       
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
@@ -98,7 +98,6 @@ namespace CustomerRecords.ViewModels
         {
             IsReadOnly = false;
             ButtonContent = "Save";
-
             EditSaveButton = Save;
         }
         private async void Save(object sender, RoutedEventArgs e)
@@ -114,12 +113,12 @@ namespace CustomerRecords.ViewModels
 
             if (confirmationResult == ContentDialogResult.Primary)
             {
-                _customerRecord = new CustomerRecord(FirstName, LastName);
+                customerRecord = new CustomerRecord(FirstName, LastName);
             }
             else
             {
-                FirstName = _customerRecord.FirstName;
-                LastName = _customerRecord.LastName;
+                FirstName = customerRecord.FirstName;
+                LastName = customerRecord.LastName;
             }
             IsReadOnly = true;
             EditSaveButton = Edit;

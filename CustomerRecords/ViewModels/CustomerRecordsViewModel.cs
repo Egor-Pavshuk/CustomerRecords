@@ -10,58 +10,60 @@ namespace CustomerRecords.ViewModels
 {
     public class CustomerRecordsViewModel : INotifyPropertyChanged
     {
-        private CustomerRecordViewModel _record;
-        private int _selectedIndex = -1;
-        private bool _isRemoveButtonEnable;
+        private CustomerRecordViewModel record;
+        private int selectedIndex = -1;
+        private bool isRemoveButtonEnable;
 
         public ObservableCollection<CustomerRecordViewModel> Records { get; set; }
         public string FirstName
         {
-            get => _record.Record.FirstName;
+            get => record.Record.FirstName;
             set
             {
-                _record.Record.FirstName = value;
+                record.Record.FirstName = value;
                 OnPropertyChanged();
             }
         }
         public string LastName
         {
-            get => _record.Record.LastName;
+            get => record.Record.LastName;
             set
             {
-                _record.Record.LastName = value;
+                record.Record.LastName = value;
                 OnPropertyChanged();
             }
         }
         public int SelectedIndex
         {
-            get => _selectedIndex;
+            get => selectedIndex;
             set
             {
-                _selectedIndex = value;
-                if (_selectedIndex != -1)
+                selectedIndex = value;
+                if (selectedIndex != -1)
                 {
                     IsRemoveButtonEnable = true;
                 }
                 else
+                {
                     IsRemoveButtonEnable = false;
+                }
 
                 OnPropertyChanged();
             }
         }
         public bool IsRemoveButtonEnable
         {
-            get => _isRemoveButtonEnable;
+            get => isRemoveButtonEnable;
             set
             {
-                _isRemoveButtonEnable = value;
+                isRemoveButtonEnable = value;
                 OnPropertyChanged();
             }
         }
 
         public CustomerRecordsViewModel()
         {
-            _record = new CustomerRecordViewModel(string.Empty, string.Empty);
+            record = new CustomerRecordViewModel(string.Empty, string.Empty);
             Records = new ObservableCollection<CustomerRecordViewModel>();
         }
 
