@@ -30,8 +30,10 @@
                 <DataTemplate x:DataType="models:CustomerRecordViewModel">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock x:Name="Id" Text="{x:Bind Record.Id}" Margin="20 10 80 10"/>
-                        <TextBox x:Name="FirstName" Width="150" Text="{x:Bind FirstName, Mode=TwoWay}" IsReadOnly="{x:Bind IsReadOnly, Mode=TwoWay}" Margin="80 10 80 10"/>
-                        <TextBox x:Name="LarstName" Width="150" Text="{x:Bind LastName, Mode=TwoWay}" IsReadOnly ="{x:Bind IsReadOnly, Mode=TwoWay}" Margin="80 10 80 10"/>
+                        <TextBox x:Name="FirstNameTextBox" Width="150" Text="{x:Bind FirstName, Mode=TwoWay}" Visibility="{Binding IsEditMode, Mode=TwoWay}" Margin="80 10 80 10"/>
+                        <TextBlock x:Name="FirstNameTextBlock" Width="150" Text="{x:Bind FirstName, Mode=TwoWay}" Visibility="{Binding IsReadOnlyMode, Mode=TwoWay}" Margin="80 10 80 10"/>
+                        <TextBox x:Name="LarstNameTextBox" Width="150" Text="{x:Bind LastName, Mode=TwoWay}" Visibility ="{Binding IsEditMode, Mode=TwoWay}" Margin="80 10 80 10"/>
+                        <TextBlock x:Name="LarstNameTextBlock" Width="150" Text="{x:Bind LastName, Mode=TwoWay}" Visibility ="{Binding IsReadOnlyMode, Mode=TwoWay}" Margin="80 10 80 10"/>
                         <Button Content="{Binding ButtonContent, Mode=TwoWay}" Click="{x:Bind EditSaveButton}" Margin="80 10 10 10"/>
                         <Button Content="Delete" Click="{x:Bind RemoveRecord}" Margin= "20 10 30 10"/>
                     </StackPanel>

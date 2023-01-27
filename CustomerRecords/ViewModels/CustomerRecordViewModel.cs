@@ -13,7 +13,8 @@ namespace CustomerRecords.ViewModels
     public class CustomerRecordViewModel : INotifyPropertyChanged
     {
         private CustomerRecord customerRecord;
-        private bool isReadOnly;
+        private bool isEditMode;
+        private bool isReadOnlyMode;
         private string buttonContent;
         private string firstName;
         private string lastName;
@@ -22,13 +23,28 @@ namespace CustomerRecords.ViewModels
         public RoutedEventHandler EditSaveButton { get; private set; }
         public event EventHandler<DeleteRecordEventArgs> DeleteRecord;
 
-        public bool IsReadOnly
+        public bool IsEditMode
         {
-            get => isReadOnly;
+            get => isEditMode;
             set
             {
-                isReadOnly = value;
-                OnPropertyChanged();
+                if (isEditMode != value)
+                {
+                    isEditMode = value;
+                    OnPropertyChanged();
+                }                
+            }
+        }
+        public bool IsReadOnlyMode
+        {
+            get => isReadOnlyMode;            
+            set
+            {
+                if (isReadOnlyMode != value)
+                {
+                    isReadOnlyMode = value;
+                    OnPropertyChanged();
+                }                
             }
         }
         public string ButtonContent
@@ -36,8 +52,11 @@ namespace CustomerRecords.ViewModels
             get => buttonContent;
             set
             {
-                buttonContent = value;
-                OnPropertyChanged();
+                if (buttonContent != value)
+                {
+                    buttonContent = value;
+                    OnPropertyChanged();
+                }                
             }
         }
         public CustomerRecord Record
@@ -45,8 +64,11 @@ namespace CustomerRecords.ViewModels
             get => customerRecord;
             set
             {
-                customerRecord = value;
-                OnPropertyChanged();
+                if (customerRecord != value)
+                {
+                    customerRecord = value;
+                    OnPropertyChanged();
+                }                
             }
         }
 
@@ -55,8 +77,11 @@ namespace CustomerRecords.ViewModels
             get => firstName;
             set
             {
-                firstName = value;
-                OnPropertyChanged();
+                if (firstName != value)
+                {
+                    firstName = value;
+                    OnPropertyChanged();
+                }                
             }
         }
         public string LastName
@@ -64,18 +89,22 @@ namespace CustomerRecords.ViewModels
             get => lastName;
             set
             {
-                lastName = value;
-                OnPropertyChanged();
+                if (lastName != value)
+                {
+                    lastName = value;
+                    OnPropertyChanged();
+                }                
             }
         }
         public CustomerRecordViewModel(string firstName, string lastName)
         {
             customerRecord = new CustomerRecord(firstName, lastName);
             ButtonContent = "Edit";
+            EditSaveButton = Edit;
             FirstName = firstName;
             LastName = lastName;
-            isReadOnly = true;
-            EditSaveButton = Edit;
+            isEditMode = false;
+            isReadOnlyMode= true;
         }
         public void RemoveRecord()
         {
@@ -96,31 +125,36 @@ namespace CustomerRecords.ViewModels
         }
         private void Edit(object sender, RoutedEventArgs e)
         {
-            IsReadOnly = false;
+            IsReadOnlyMode = false;
+            IsEditMode = true;
             ButtonContent = "Save";
             EditSaveButton = Save;
         }
         private async void Save(object sender, RoutedEventArgs e)
         {
-            var contentDialog = new ContentDialog()
+            if (firstName != customerRecord.FirstName || lastName != customerRecord.LastName)
             {
-                Title = "Confirmation",
-                Content = "Are you sure to save?",
-                PrimaryButtonText = "Yes",
-                CloseButtonText = "Cancel",
-            };
-            var confirmationResult = await contentDialog.ShowAsync();
+                var contentDialog = new ContentDialog()
+                {
+                    Title = "Confirmation",
+                    Content = "Are you sure to save?",
+                    PrimaryButtonText = "Yes",
+                    CloseButtonText = "Cancel",
+                };
+                var confirmationResult = await contentDialog.ShowAsync();
 
-            if (confirmationResult == ContentDialogResult.Primary)
-            {
-                customerRecord = new CustomerRecord(FirstName, LastName);
-            }
-            else
-            {
-                FirstName = customerRecord.FirstName;
-                LastName = customerRecord.LastName;
-            }
-            IsReadOnly = true;
+                if (confirmationResult == ContentDialogResult.Primary)
+                {
+                    customerRecord = new CustomerRecord(FirstName, LastName);
+                }
+                else
+                {
+                    FirstName = customerRecord.FirstName;
+                    LastName = customerRecord.LastName;
+                }
+            }            
+            IsReadOnlyMode = true;
+            IsEditMode = false;
             EditSaveButton = Edit;
             ButtonContent = "Edit";
             return;
