@@ -16,22 +16,22 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Enter first name:" FontSize="35" FontFamily="Times New Roman" Margin="0,0,626,110" Height="50" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="300"/>
-        <TextBlock Grid.Row="0" Text="Enter last name:" FontSize="35" FontFamily="Times New Roman" Margin="0,0,626,30" HorizontalAlignment="Right" Width="300" Height="50" VerticalAlignment="Bottom"/>
+        <TextBlock x:Uid="firstName" Grid.Row="0" FontSize="35" FontFamily="Times New Roman" Margin="0,0,626,110" Height="50" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="300"/>
+        <TextBlock x:Uid="lastName" Grid.Row="0" FontSize="35" FontFamily="Times New Roman" Margin="0,0,626,30" HorizontalAlignment="Right" Width="300" Height="50" VerticalAlignment="Bottom"/>
 
-        <Button Content="Save" Height="60" FontSize="40" FontFamily="Times New Roman" BorderBrush="Black" Click="{x:Bind ViewModel.AddToRecords}" Margin="0,0,49,100" HorizontalAlignment="Right" Width="150" VerticalAlignment="Bottom"/>
-       <!-- <Button Content="Delete" Height="60" FontSize="40" FontFamily="Times New Roman" BorderBrush="Black" Click="{x:Bind ViewModel.Remove}" IsEnabled="{Binding IsRemoveButtonEnable, Mode=TwoWay}" Margin="0,0,49,26" HorizontalAlignment="Right" Width="150" VerticalAlignment="Bottom"/>-->
-
-        <TextBox x:Name="FirstNameText" Grid.Row="0" PlaceholderText="Enter text" Text="{x:Bind ViewModel.FirstName, Mode=TwoWay}" FontSize="30" FontFamily="Times New Roman" Margin="0,0,301,110" Height="50" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="300"/>
-        <TextBox x:Name="LastNameText" Grid.Row="0" PlaceholderText="Enter text" Text="{x:Bind ViewModel.LastName, Mode=TwoWay}" FontSize="30" FontFamily="Times New Roman" Margin="0,0,301,30" Height="50" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="300"/>
+        <Button x:Uid="save" Height="60" FontSize="40" FontFamily="Times New Roman" BorderBrush="Black" Click="{x:Bind ViewModel.AddToRecords}" Margin="0,0,49,100" HorizontalAlignment="Right" Width="150" VerticalAlignment="Bottom"/>
+        <TextBox x:Uid="enterText" x:Name="FirstNameText" Grid.Row="0" Text="{x:Bind ViewModel.FirstName, Mode=TwoWay}" FontSize="30" FontFamily="Times New Roman" Margin="0,0,301,110" Height="50" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="300"/>
+        <TextBox x:Uid="enterText" x:Name="LastNameText" Grid.Row="0" Text="{x:Bind ViewModel.LastName, Mode=TwoWay}" FontSize="30" FontFamily="Times New Roman" Margin="0,0,301,30" Height="50" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="300"/>
 
         <ListBox Grid.Row="1" BorderBrush="Black" ItemsSource="{x:Bind ViewModel.Records}" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}">
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="models:CustomerRecordViewModel">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock x:Name="Id" Text="{x:Bind Record.Id}" Margin="20 10 80 10"/>
-                        <TextBox x:Name="FirstName" Width="150" Text="{x:Bind FirstName, Mode=TwoWay}" IsReadOnly="{x:Bind IsReadOnly, Mode=TwoWay}" Margin="80 10 80 10"/>
-                        <TextBox x:Name="LarstName" Width="150" Text="{x:Bind LastName, Mode=TwoWay}" IsReadOnly ="{x:Bind IsReadOnly, Mode=TwoWay}" Margin="80 10 80 10"/>
+                        <TextBox x:Name="FirstNameTextBox" Width="150" Text="{x:Bind FirstName, Mode=TwoWay}" Visibility="{Binding IsEditMode, Mode=TwoWay}" Margin="80 10 80 10"/>
+                        <TextBlock x:Name="FirstNameTextBlock" Width="150" Text="{x:Bind FirstName, Mode=TwoWay}" Visibility="{Binding IsReadOnlyMode, Mode=TwoWay}" Margin="80 10 80 10"/>
+                        <TextBox x:Name="LarstNameTextBox" Width="150" Text="{x:Bind LastName, Mode=TwoWay}" Visibility ="{Binding IsEditMode, Mode=TwoWay}" Margin="80 10 80 10"/>
+                        <TextBlock x:Name="LarstNameTextBlock" Width="150" Text="{x:Bind LastName, Mode=TwoWay}" Visibility ="{Binding IsReadOnlyMode, Mode=TwoWay}" Margin="80 10 80 10"/>
                         <Button Content="{Binding ButtonContent, Mode=TwoWay}" Click="{x:Bind EditSaveButton}" Margin="80 10 10 10"/>
                         <Button Content="Delete" Click="{x:Bind RemoveRecord}" Margin= "20 10 30 10"/>
                     </StackPanel>

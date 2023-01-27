@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CustomerRecords.Events
+﻿namespace CustomerRecords.Events
 {
     public class DeleteRecordEventArgs
     {
-        private readonly int _id;
-        public DeleteRecordEventArgs(int id)
+        private readonly int id;
+        public DeleteRecordEventArgs(int recordId)
         {
-            _id = id;
+            id = recordId;
         }
 
-        public int RecordId { get => _id; }
+        public int RecordId { get => id; }
     }
 }
