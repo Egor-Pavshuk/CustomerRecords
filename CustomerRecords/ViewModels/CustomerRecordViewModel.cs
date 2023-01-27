@@ -4,7 +4,6 @@ using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -32,19 +31,19 @@ namespace CustomerRecords.ViewModels
                 {
                     isEditMode = value;
                     OnPropertyChanged();
-                }                
+                }
             }
         }
         public bool IsReadOnlyMode
         {
-            get => isReadOnlyMode;            
+            get => isReadOnlyMode;
             set
             {
                 if (isReadOnlyMode != value)
                 {
                     isReadOnlyMode = value;
                     OnPropertyChanged();
-                }                
+                }
             }
         }
         public string ButtonContent
@@ -56,7 +55,7 @@ namespace CustomerRecords.ViewModels
                 {
                     buttonContent = value;
                     OnPropertyChanged();
-                }                
+                }
             }
         }
         public CustomerRecord Record
@@ -68,7 +67,7 @@ namespace CustomerRecords.ViewModels
                 {
                     customerRecord = value;
                     OnPropertyChanged();
-                }                
+                }
             }
         }
 
@@ -81,7 +80,7 @@ namespace CustomerRecords.ViewModels
                 {
                     firstName = value;
                     OnPropertyChanged();
-                }                
+                }
             }
         }
         public string LastName
@@ -93,7 +92,7 @@ namespace CustomerRecords.ViewModels
                 {
                     lastName = value;
                     OnPropertyChanged();
-                }                
+                }
             }
         }
         public CustomerRecordViewModel(string firstName, string lastName)
@@ -104,12 +103,12 @@ namespace CustomerRecords.ViewModels
             FirstName = firstName;
             LastName = lastName;
             isEditMode = false;
-            isReadOnlyMode= true;
+            isReadOnlyMode = true;
         }
         public void RemoveRecord()
         {
             OnDeleteRecord(this, new DeleteRecordEventArgs(customerRecord.Id));
-        }       
+        }
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             if (PropertyChanged != null)
@@ -152,7 +151,7 @@ namespace CustomerRecords.ViewModels
                     FirstName = customerRecord.FirstName;
                     LastName = customerRecord.LastName;
                 }
-            }            
+            }
             IsReadOnlyMode = true;
             IsEditMode = false;
             EditSaveButton = Edit;

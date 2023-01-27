@@ -12,7 +12,6 @@ namespace CustomerRecords.ViewModels
     {
         private CustomerRecordViewModel record;
         private int selectedIndex = -1;
-        private bool isRemoveButtonEnable;
 
         public ObservableCollection<CustomerRecordViewModel> Records { get; set; }
         public string FirstName
@@ -20,8 +19,11 @@ namespace CustomerRecords.ViewModels
             get => record.Record.FirstName;
             set
             {
-                record.Record.FirstName = value;
-                OnPropertyChanged();
+                if (record.Record.FirstName != value)
+                {
+                    record.Record.FirstName = value;
+                    OnPropertyChanged();
+                }
             }
         }
         public string LastName
@@ -29,8 +31,11 @@ namespace CustomerRecords.ViewModels
             get => record.Record.LastName;
             set
             {
-                record.Record.LastName = value;
-                OnPropertyChanged();
+                if (record.Record.LastName != value)
+                {
+                    record.Record.LastName = value;
+                    OnPropertyChanged();
+                }
             }
         }
         public int SelectedIndex
@@ -38,26 +43,11 @@ namespace CustomerRecords.ViewModels
             get => selectedIndex;
             set
             {
-                selectedIndex = value;
-                if (selectedIndex != -1)
+                if (selectedIndex != value)
                 {
-                    IsRemoveButtonEnable = true;
+                    selectedIndex = value;
+                    OnPropertyChanged();
                 }
-                else
-                {
-                    IsRemoveButtonEnable = false;
-                }
-
-                OnPropertyChanged();
-            }
-        }
-        public bool IsRemoveButtonEnable
-        {
-            get => isRemoveButtonEnable;
-            set
-            {
-                isRemoveButtonEnable = value;
-                OnPropertyChanged();
             }
         }
 
