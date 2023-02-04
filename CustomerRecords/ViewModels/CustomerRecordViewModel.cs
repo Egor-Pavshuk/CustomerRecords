@@ -97,7 +97,11 @@ namespace CustomerRecords.ViewModels
         }
         public CustomerRecordViewModel(string firstName, string lastName)
         {
-            customerRecord = new CustomerRecord(firstName, lastName);
+            customerRecord = new CustomerRecord
+            {
+                FirstName = firstName,
+                LastName = lastName
+            };
             ButtonContent = "Edit";
             EditSaveButton = Edit;
             FirstName = firstName;
@@ -146,7 +150,11 @@ namespace CustomerRecords.ViewModels
 
                 if (confirmationResult == ContentDialogResult.Primary)
                 {
-                    customerRecord = new CustomerRecord(FirstName, LastName);
+                    customerRecord = new CustomerRecord
+                    {
+                        FirstName = firstName,
+                        LastName = lastName
+                    };
                 }
                 else
                 {

@@ -11,7 +11,7 @@ namespace CustomerRecords.ViewModels
     public class CustomerRecordsViewModel : INotifyPropertyChanged
     {
         private CustomerRecordViewModel record;
-        private int selectedIndex = -1;
+        private CustomerRecordViewModel selectedItem;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ObservableCollection<CustomerRecordViewModel> Records { get; set; }
@@ -39,14 +39,14 @@ namespace CustomerRecords.ViewModels
                 }
             }
         }
-        public int SelectedIndex
+        public CustomerRecordViewModel SelectedItem
         {
-            get => selectedIndex;
+            get => selectedItem;
             set
             {
-                if (selectedIndex != value)
+                if (selectedItem != value)
                 {
-                    selectedIndex = value;
+                    selectedItem = value;
                     OnPropertyChanged();
                 }
             }
@@ -96,7 +96,7 @@ namespace CustomerRecords.ViewModels
             if (confirmationResult == ContentDialogResult.Primary)
             {
                 Records.Remove(Records.First(r => r.Record.Id == e.RecordId));
-                SelectedIndex = -1;
+                SelectedItem = null;
             }
         }
 
