@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace CustomerRecords.ViewModels
 {
-    public class CustomerRecordViewModel : INotifyPropertyChanged
+    public class CustomerRecordViewModel : BindableBase
     {
         private CustomerRecord customerRecord;
         private bool isEditMode;
@@ -17,7 +17,6 @@ namespace CustomerRecords.ViewModels
         private string buttonContent;
         private string firstName;
         private string lastName;
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public RoutedEventHandler EditSaveButton { get; private set; }
         public event EventHandler<DeleteRecordEventArgs> DeleteRecord;
@@ -112,14 +111,7 @@ namespace CustomerRecords.ViewModels
         public void RemoveRecord()
         {
             OnDeleteRecord(this, new DeleteRecordEventArgs(customerRecord.Id));
-        }
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
-            }
-        }
+        }        
         private void OnDeleteRecord(object sender, DeleteRecordEventArgs e)
         {
             var temp = Volatile.Read(ref DeleteRecord);

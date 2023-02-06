@@ -8,11 +8,10 @@ using Windows.UI.Xaml.Controls;
 
 namespace CustomerRecords.ViewModels
 {
-    public class CustomerRecordsViewModel : INotifyPropertyChanged
+    public class CustomerRecordsViewModel : BindableBase
     {
         private CustomerRecordViewModel record;
         private CustomerRecordViewModel selectedItem;
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public ObservableCollection<CustomerRecordViewModel> Records { get; set; }
         public string FirstName
@@ -97,14 +96,6 @@ namespace CustomerRecords.ViewModels
             {
                 Records.Remove(Records.First(r => r.Record.Id == e.RecordId));
                 SelectedItem = null;
-            }
-        }
-
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
             }
         }
     }
