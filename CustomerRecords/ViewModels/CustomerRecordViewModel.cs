@@ -19,7 +19,7 @@ namespace CustomerRecords.ViewModels
         private string lastName;
 
         public RoutedEventHandler EditSaveButton { get; private set; }
-        public event EventHandler<DeleteRecordEventArgs> DeleteRecord;
+        public event EventHandler<DeleteRecordEventArgs> RecordDeleted;
 
         public bool IsEditMode
         {
@@ -110,11 +110,11 @@ namespace CustomerRecords.ViewModels
         }
         public void RemoveRecord()
         {
-            OnDeleteRecord(this, new DeleteRecordEventArgs(customerRecord.Id));
+            OnRecordDeleted(this, new DeleteRecordEventArgs(customerRecord.Id));
         }        
-        private void OnDeleteRecord(object sender, DeleteRecordEventArgs e)
+        private void OnRecordDeleted(object sender, DeleteRecordEventArgs e)
         {
-            var temp = Volatile.Read(ref DeleteRecord);
+            var temp = Volatile.Read(ref RecordDeleted);
             if (temp != null)
             {
                 temp(sender, e);
