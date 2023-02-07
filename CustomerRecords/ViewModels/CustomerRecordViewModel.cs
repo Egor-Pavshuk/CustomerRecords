@@ -1,8 +1,6 @@
 ﻿using CustomerRecords.Events;
 using CustomerRecords.Models;
 using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -111,7 +109,7 @@ namespace CustomerRecords.ViewModels
         public void RemoveRecord()
         {
             OnRecordDeleted(this, new DeleteRecordEventArgs(customerRecord.Id));
-        }        
+        }
         private void OnRecordDeleted(object sender, DeleteRecordEventArgs e)
         {
             var temp = Volatile.Read(ref RecordDeleted);

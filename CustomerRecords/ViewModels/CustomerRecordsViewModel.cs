@@ -1,15 +1,11 @@
 ﻿using CustomerRecords.Commands;
-using CustomerRecords.Events;
 using CustomerRecords.Models;
+using CustomerRecords.Validation;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Windows.Networking;
-using Windows.UI.Xaml;
+using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 
 namespace CustomerRecords.ViewModels
@@ -80,8 +76,18 @@ namespace CustomerRecords.ViewModels
             DeleteCommand = new RelayCommand(Remove);
         }
 
-        public void AddToRecords()
+        public async void AddToRecords()
         {
+            if (!NameInputValidation.Validate(FirstNameField) || !NameInputValidation.Validate(LastNameField))
+            {
+                var contentDialog = new MessageDialog("Fields must contain only letters!")
+                {
+                    Title = "Input error!"
+                };
+                await contentDialog.ShowAsync();
+                return;
+            }
+
             if (FirstNameField.Length > 0 && LastNameField.Length > 0)
             {
                 if (Records.Count > 0)
@@ -101,7 +107,7 @@ namespace CustomerRecords.ViewModels
                 {
                     var customersRecord = new CustomerRecord()
                     {
-                        FirstName = FirstNameField, 
+                        FirstName = FirstNameField,
                         LastName = LastNameField,
                         IsEditMode = false,
                         IsReadOnlyMode = true,
@@ -141,7 +147,7 @@ namespace CustomerRecords.ViewModels
         }
         private void Edit(object sender)
         {
-            var selectedCustomerRecord = sender as CustomerRecord;            
+            var selectedCustomerRecord = sender as CustomerRecord;
             var customerRecord = Records.First(r => r.Id == selectedCustomerRecord.Id);
             editableRecord = new CustomerRecord()
             {
@@ -161,14 +167,19 @@ namespace CustomerRecords.ViewModels
             {
                 return;
             }
-            if (newRecord.FirstName == string.Empty || newRecord.LastName == string.Empty)
+            if (!NameInputValidation.Validate(newRecord.FirstName) || !NameInputValidation.Validate(newRecord.LastName))
             {
+                var contentDialog = new MessageDialog("Fields must contain only letters!")
+                {
+                    Title = "Input error!"
+                };
+                await contentDialog.ShowAsync();
                 return;
             }
 
-            var currentRecord = Records.FirstOrDefault(r => r.Id == editableRecord.Id);
+            var currentRecord = Records.First(r => r.Id == editableRecord.Id);
             if (newRecord.FirstName != editableRecord.FirstName || newRecord.LastName != editableRecord.LastName)
-            {                
+            {
                 var contentDialog = new ContentDialog()
                 {
                     Title = "Confirmation",
