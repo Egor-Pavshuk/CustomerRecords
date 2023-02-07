@@ -1,52 +1,68 @@
-﻿using CustomerRecords.Events;
+﻿using CustomerRecords.Commands;
+using CustomerRecords.Models;
+using CustomerRecords.Validation;
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using System.Windows.Input;
+using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 
 namespace CustomerRecords.ViewModels
 {
-    public class CustomerRecordsViewModel : INotifyPropertyChanged
+    public class CustomerRecordsViewModel : BindableBase
     {
-        private CustomerRecordViewModel record;
-        private int selectedIndex = -1;
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public ObservableCollection<CustomerRecordViewModel> Records { get; set; }
-        public string FirstName
+        private CustomerRecord editableRecord;
+        private CustomerRecord selectedItem;
+        private string firstNameField = string.Empty;
+        private string lastNameField = string.Empty;
+        private ICommand editSaveButtonCommand;
+        public ICommand DeleteCommand { get; set; }
+        public ObservableCollection<CustomerRecord> Records { get; set; }
+        public string FirstNameField
         {
-            get => record.Record.FirstName;
+            get => firstNameField;
             set
             {
-                if (record.Record.FirstName != value)
+                if (firstNameField != value)
                 {
-                    record.Record.FirstName = value;
+                    firstNameField = value;
                     OnPropertyChanged();
                 }
             }
         }
-        public string LastName
+        public string LastNameField
         {
-            get => record.Record.LastName;
+            get => lastNameField;
             set
             {
-                if (record.Record.LastName != value)
+                if (lastNameField != value)
                 {
-                    record.Record.LastName = value;
+                    lastNameField = value;
                     OnPropertyChanged();
                 }
             }
         }
-        public int SelectedIndex
+        public CustomerRecord SelectedItem
         {
-            get => selectedIndex;
+            get => selectedItem;
             set
             {
-                if (selectedIndex != value)
+                if (selectedItem != value)
                 {
-                    selectedIndex = value;
+                    selectedItem = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public ICommand EditSaveButtonCommand
+        {
+            get => editSaveButtonCommand;
+            set
+            {
+                if (editSaveButtonCommand != value)
+                {
+                    editSaveButtonCommand = value;
                     OnPropertyChanged();
                 }
             }
@@ -54,36 +70,61 @@ namespace CustomerRecords.ViewModels
 
         public CustomerRecordsViewModel()
         {
-            record = new CustomerRecordViewModel(string.Empty, string.Empty);
-            Records = new ObservableCollection<CustomerRecordViewModel>();
+            editableRecord = null;
+            Records = new ObservableCollection<CustomerRecord>();
+            EditSaveButtonCommand = new RelayCommand(Edit);
+            DeleteCommand = new RelayCommand(Remove);
         }
 
-        public void AddToRecords()
+        public async void AddToRecords()
         {
-            if (FirstName.Length > 0 && LastName.Length > 0)
+            if (!NameInputValidation.Validate(FirstNameField) || !NameInputValidation.Validate(LastNameField))
+            {
+                var contentDialog = new MessageDialog("Fields must contain only letters!")
+                {
+                    Title = "Input error!"
+                };
+                await contentDialog.ShowAsync();
+                return;
+            }
+
+            if (FirstNameField.Length > 0 && LastNameField.Length > 0)
             {
                 if (Records.Count > 0)
                 {
-                    var customersRecord = new CustomerRecordViewModel(FirstName, LastName);
-                    customersRecord.DeleteRecord += Remove;
-                    customersRecord.Record.Id = Records.Last().Record.Id + 1;
+                    var customersRecord = new CustomerRecord
+                    {
+                        FirstName = FirstNameField,
+                        LastName = LastNameField,
+                        IsEditMode = false,
+                        IsReadOnlyMode = true,
+                        ButtonContent = "Edit",
+                        Id = Records.Last().Id + 1
+                    };
                     Records.Add(customersRecord);
                 }
                 else
                 {
-                    var customersRecord = new CustomerRecordViewModel(FirstName, LastName);
-                    customersRecord.DeleteRecord += Remove;
+                    var customersRecord = new CustomerRecord()
+                    {
+                        FirstName = FirstNameField,
+                        LastName = LastNameField,
+                        IsEditMode = false,
+                        IsReadOnlyMode = true,
+                        ButtonContent = "Edit"
+                    };
                     Records.Add(customersRecord);
                 }
 
-                FirstName = string.Empty;
-                LastName = string.Empty;
+                FirstNameField = string.Empty;
+                LastNameField = string.Empty;
             }
 
         }
 
-        public async void Remove(object sender, DeleteRecordEventArgs e)
+        public async void Remove(object sender)
         {
+            var customerRecord = sender as CustomerRecord;
             var contentDialog = new ContentDialog()
             {
                 Title = "Confirmation",
@@ -95,17 +136,71 @@ namespace CustomerRecords.ViewModels
             var confirmationResult = await contentDialog.ShowAsync();
             if (confirmationResult == ContentDialogResult.Primary)
             {
-                Records.Remove(Records.First(r => r.Record.Id == e.RecordId));
-                SelectedIndex = -1;
+                if (editableRecord != null && customerRecord.Id == editableRecord.Id)
+                {
+                    EditSaveButtonCommand = new RelayCommand(Edit);
+                    editableRecord = null;
+                }
+                Records.Remove(customerRecord);
+                SelectedItem = null;
             }
         }
-
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        private void Edit(object sender)
         {
-            if (PropertyChanged != null)
+            var selectedCustomerRecord = sender as CustomerRecord;
+            var customerRecord = Records.First(r => r.Id == selectedCustomerRecord.Id);
+            editableRecord = new CustomerRecord()
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+                Id = customerRecord.Id,
+                FirstName = customerRecord.FirstName,
+                LastName = customerRecord.LastName
+            };
+            customerRecord.IsReadOnlyMode = false;
+            customerRecord.IsEditMode = true;
+            customerRecord.ButtonContent = "Save";
+            EditSaveButtonCommand = new RelayCommand(Save);
+        }
+        private async void Save(object sender)
+        {
+            var newRecord = sender as CustomerRecord;
+            if (newRecord.Id != editableRecord.Id)
+            {
+                return;
             }
+            if (!NameInputValidation.Validate(newRecord.FirstName) || !NameInputValidation.Validate(newRecord.LastName))
+            {
+                var contentDialog = new MessageDialog("Fields must contain only letters!")
+                {
+                    Title = "Input error!"
+                };
+                await contentDialog.ShowAsync();
+                return;
+            }
+
+            var currentRecord = Records.First(r => r.Id == editableRecord.Id);
+            if (newRecord.FirstName != editableRecord.FirstName || newRecord.LastName != editableRecord.LastName)
+            {
+                var contentDialog = new ContentDialog()
+                {
+                    Title = "Confirmation",
+                    Content = "Are you sure to save?",
+                    PrimaryButtonText = "Yes",
+                    CloseButtonText = "Cancel",
+                };
+                var confirmationResult = await contentDialog.ShowAsync();
+
+                if (confirmationResult != ContentDialogResult.Primary)
+                {
+                    currentRecord.FirstName = editableRecord.FirstName;
+                    currentRecord.LastName = editableRecord.LastName;
+                }
+            }
+
+            editableRecord = null;
+            currentRecord.IsReadOnlyMode = true;
+            currentRecord.IsEditMode = false;
+            EditSaveButtonCommand = new RelayCommand(Edit);
+            currentRecord.ButtonContent = "Edit";
         }
     }
 }

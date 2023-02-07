@@ -1,15 +1,13 @@
 ﻿using CustomerRecords.Events;
 using CustomerRecords.Models;
 using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace CustomerRecords.ViewModels
 {
-    public class CustomerRecordViewModel : INotifyPropertyChanged
+    public class CustomerRecordViewModel : BindableBase
     {
         private CustomerRecord customerRecord;
         private bool isEditMode;
@@ -17,10 +15,9 @@ namespace CustomerRecords.ViewModels
         private string buttonContent;
         private string firstName;
         private string lastName;
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public RoutedEventHandler EditSaveButton { get; private set; }
-        public event EventHandler<DeleteRecordEventArgs> DeleteRecord;
+        public event EventHandler<DeleteRecordEventArgs> RecordDeleted;
 
         public bool IsEditMode
         {
@@ -97,7 +94,11 @@ namespace CustomerRecords.ViewModels
         }
         public CustomerRecordViewModel(string firstName, string lastName)
         {
-            customerRecord = new CustomerRecord(firstName, lastName);
+            customerRecord = new CustomerRecord
+            {
+                FirstName = firstName,
+                LastName = lastName
+            };
             ButtonContent = "Edit";
             EditSaveButton = Edit;
             FirstName = firstName;
@@ -107,18 +108,11 @@ namespace CustomerRecords.ViewModels
         }
         public void RemoveRecord()
         {
-            OnDeleteRecord(this, new DeleteRecordEventArgs(customerRecord.Id));
+            OnRecordDeleted(this, new DeleteRecordEventArgs(customerRecord.Id));
         }
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        private void OnRecordDeleted(object sender, DeleteRecordEventArgs e)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
-            }
-        }
-        private void OnDeleteRecord(object sender, DeleteRecordEventArgs e)
-        {
-            var temp = Volatile.Read(ref DeleteRecord);
+            var temp = Volatile.Read(ref RecordDeleted);
             if (temp != null)
             {
                 temp(sender, e);
@@ -146,7 +140,11 @@ namespace CustomerRecords.ViewModels
 
                 if (confirmationResult == ContentDialogResult.Primary)
                 {
-                    customerRecord = new CustomerRecord(FirstName, LastName);
+                    customerRecord = new CustomerRecord
+                    {
+                        FirstName = firstName,
+                        LastName = lastName
+                    };
                 }
                 else
                 {
